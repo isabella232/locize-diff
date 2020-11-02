@@ -5,5 +5,8 @@
   "env": {
     "jest": true,
     "node": true
+  },
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
 }

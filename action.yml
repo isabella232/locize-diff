@@ -1,10 +1,26 @@
-name: "Locize Diff"
-description: "Displays a diff of translations for two Locize versions."
+name: 'Locize Diff'
+description: 'Displays a diff of translations for two Locize versions.'
 runs:
-  using: "node12"
-  main: "lib/index.js"
+  using: 'node12'
+  main: 'dist/index.js'
 inputs:
-  milliseconds:
-    description: "number of milliseconds to wait"
+  projectId:
+    description: 'Locize project id'
     required: true
-    default: "1000"
+  projectSlug:
+    description: 'Locize project slug. Used to provide a quick link in the comment to navigate directly to the project settings for quick publishing.'
+  leftVersion:
+    description: 'Locize version to use as the left side of the comparision.'
+    default: 'latest'
+  rightVersion:
+    description: 'Locize version to use as the right side of the comparison.'
+    default: 'production'
+  ignoreDeletedKeys:
+    description: 'When true, will ignore deleted keys in the comparison.'
+    default: true
+  includeDrafts:
+    description: 'When true, will run the action for draft PRs.'
+    default: false
+  token:
+    description: "GITHUB_TOKEN used to authenticate requests. Since there's a default, this is typically not supplied by the user."
+    default: ${{ github.token }}
