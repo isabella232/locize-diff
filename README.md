@@ -2,6 +2,8 @@
 
 GitHub Action to display a diff of translations for two Locize versions.
 
+![Example comments](https://raw.githubusercontent.com/Widen/locize-diff/main/screenshot.png)
+
 ## Inputs
 
 ### `projectId`
