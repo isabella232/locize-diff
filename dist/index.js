@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(434);
+/******/ 		return __webpack_require__(442);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -1394,7 +1394,7 @@ function escapeProperty(s) {
 
 /***/ }),
 
-/***/ 434:
+/***/ 442:
 /***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1562,8 +1562,8 @@ function collectResources(projectId, version) {
     });
 }
 
-// CONCATENATED MODULE: ./src/index.ts
-var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+// CONCATENATED MODULE: ./src/runAction.ts
+var runAction_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1578,9 +1578,9 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 
-function main() {
+function runAction() {
     var _a;
-    return src_awaiter(this, void 0, void 0, function* () {
+    return runAction_awaiter(this, void 0, void 0, function* () {
         const projectId = Object(core.getInput)('projectId');
         const leftVersion = Object(core.getInput)('leftVersion');
         const rightVersion = Object(core.getInput)('rightVersion');
@@ -1612,11 +1612,15 @@ function main() {
             }
         }
         catch (err) {
+            console.log(err);
             Object(core.setFailed)(err.message);
         }
     });
 }
-main();
+
+// CONCATENATED MODULE: ./src/index.ts
+
+runAction();
 
 
 /***/ }),
