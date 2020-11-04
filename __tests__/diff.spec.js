@@ -7,6 +7,7 @@ import {
   createCommentMock,
   listCommentsMock,
   updateCommentMock,
+  graphqlMock,
 } from '@actions/github'
 import { createMessage } from '../src/message'
 import { runAction } from '../src/runAction'
@@ -51,7 +52,7 @@ const sampleComment = createMessage([
 ])
 
 it('should not comment if the comment already exists', async () => {
-  listCommentsMock.mockReturnValue([{ body: sampleComment, id: 1 }])
+  listCommentsMock.mockReturnValue([{ body: sampleComment }])
   mockListResources((version) => [`projectId/${version}/en-US/translation`])
   mockFetchResource(
     { 'en-US/translation': { foo: 'bar', hi: 'ho' } },
@@ -77,4 +78,64 @@ it('should update the existing comment if it exists', async () => {
   expect(updateCommentMock.mock.calls[0][0].comment_id).toBe(2)
   expect(updateCommentMock.mock.calls[0][0].issue_number).toBe(123)
   expect(updateCommentMock.mock.calls[0][0].body).toMatchSnapshot()
+})
+
+it('should display diffs for each language/namespace', async () => {
+  mockListResources((version) => [
+    `projectId/${version}/en-US/common`,
+    `projectId/${version}/en-US/translation`,
+    `projectId/${version}/zh-CN/ns`,
+  ])
+
+  mockFetchResource(
+    {
+      'en-US/translation': { foo: 'bar', hi: 'ho' },
+      'en-US/common': { en: 'common' },
+      'zh-CN/ns': {
+        a: 'abc',
+        b: '123',
+        c: 'efg',
+      },
+    },
+    {
+      'en-US/translation': { foo: 'baz', hi: 'howdy' },
+      'en-US/common': { en: 'not common' },
+      'zh-CN/ns': {
+        a: '123',
+        b: 'abc',
+        c: 'efg',
+      },
+    }
+  )
+
+  await runAction()
+  expect(createCommentMock).toHaveBeenCalledTimes(1)
+  expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
+  expect(createCommentMock.mock.calls[0][0].body).toMatchSnapshot()
+})
+
+it('should minimize the existing comment if there are no longer diffs', async () => {
+  listCommentsMock.mockReturnValue([{ body: sampleComment, node_id: 2 }])
+  mockListResources((version) => [`projectId/${version}/en-US/translation`])
+  mockFetchResource(
+    { 'en-US/translation': { foo: 'bar' } },
+    { 'en-US/translation': { foo: 'bar' } }
+  )
+
+  await runAction()
+  expect(graphqlMock).toHaveBeenCalledWith(expect.anything(), { subjectId: 2 })
+})
+
+it('should display a link to the product settings if a projectSlug is provided', async () => {
+  mocks.projectSlug.mockReturnValue('42od1i754u')
+  mockListResources((version) => [`projectId/${version}/en-US/translation`])
+  mockFetchResource(
+    { 'en-US/translation': { foo: 'bar' } },
+    { 'en-US/translation': { foo: 'baz' } }
+  )
+
+  await runAction()
+  expect(createCommentMock).toHaveBeenCalledTimes(1)
+  expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
+  expect(createCommentMock.mock.calls[0][0].body).toMatchSnapshot()
 })

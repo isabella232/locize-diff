@@ -2,6 +2,10 @@ export const mocks = {
   projectId: jest.fn(),
   projectSlug: jest.fn(),
   apiKey: jest.fn(),
+  leftVersion: jest.fn(),
+  rightVersion: jest.fn(),
+  includeDrafts: jest.fn(),
+  ignoreDeletedKeys: jest.fn(),
 }
 
 const defaults = {
