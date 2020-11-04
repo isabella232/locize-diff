@@ -1,6 +1,9 @@
+import { getInput } from '@actions/core'
 import { HttpClient } from '@actions/http-client'
+import { BearerCredentialHandler } from '@actions/http-client/auth'
 
-const client = new HttpClient()
+const authHandler = new BearerCredentialHandler(getInput('apiKey'))
+const client = new HttpClient(undefined, [authHandler])
 
 export function getJSON<T>(url: string): Promise<T> {
   return client

@@ -599,6 +599,72 @@ module.exports = require("https");
 
 /***/ }),
 
+/***/ 226:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class BasicCredentialHandler {
+    constructor(username, password) {
+        this.username = username;
+        this.password = password;
+    }
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' +
+                Buffer.from(this.username + ':' + this.password).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BasicCredentialHandler = BasicCredentialHandler;
+class BearerCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] = 'Bearer ' + this.token;
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.BearerCredentialHandler = BearerCredentialHandler;
+class PersonalAccessTokenCredentialHandler {
+    constructor(token) {
+        this.token = token;
+    }
+    // currently implements pre-authorization
+    // TODO: support preAuth = false where it hooks on 401
+    prepareRequest(options) {
+        options.headers['Authorization'] =
+            'Basic ' + Buffer.from('PAT:' + this.token).toString('base64');
+    }
+    // This handler cannot handle 401
+    canHandleAuthentication(response) {
+        return false;
+    }
+    handleAuthentication(httpClient, requestInfo, objs) {
+        return null;
+    }
+}
+exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
+
+
+/***/ }),
+
 /***/ 262:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1440,6 +1506,9 @@ function diffResources(left, right) {
 // EXTERNAL MODULE: ./node_modules/@actions/http-client/index.js
 var http_client = __webpack_require__(539);
 
+// EXTERNAL MODULE: ./node_modules/@actions/http-client/auth.js
+var auth = __webpack_require__(226);
+
 // CONCATENATED MODULE: ./src/api.ts
 var api_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1451,7 +1520,10 @@ var api_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
     });
 };
 
-const client = new http_client.HttpClient();
+
+
+const authHandler = new auth.BearerCredentialHandler(Object(core.getInput)('apiKey'));
+const client = new http_client.HttpClient(undefined, [authHandler]);
 function getJSON(url) {
     return client
         .get(url)
@@ -1480,9 +1552,10 @@ function collectResources(projectId, version) {
         const resources = yield listResources(projectId, version);
         const promises = resources.map((resource) => utils_awaiter(this, void 0, void 0, function* () {
             const [language, namespace] = resource.url.split('/').slice(-2);
+            const url = resource.url.replace(projectId, `pull/${projectId}`);
             return {
                 key: `${language}/${namespace}`,
-                resources: yield getJSON(resource.url),
+                resources: yield getJSON(url),
             };
         }));
         return Promise.all(promises);

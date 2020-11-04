@@ -10,6 +10,10 @@ GitHub Action to display a diff of translations for two Locize versions.
 
 Locize project id. You can find your `projectId` in your project settings under the **Api Keys** tab. **Required**
 
+### `apiKey`
+
+Locize API key. You can find your `apiKey` in your project settings under the **Api Keys** tab. **Required**
+
 ### `projectSlug`
 
 Locize project slug. Used to provide a quick link in the comment to navigate directly to the project settings for quick publishing.
@@ -48,6 +52,7 @@ steps:
   - uses: Widen/locize-diff@v1
     with:
       projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
       projectSlug: maj9dez2
 ```
 
@@ -59,6 +64,7 @@ steps:
   - uses: Widen/locize-diff@v1
     with:
       projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
       leftVersion: left
       rightVersion: right
 ```

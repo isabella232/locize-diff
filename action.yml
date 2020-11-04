@@ -7,6 +7,9 @@ inputs:
   projectId:
     description: 'Locize project id'
     required: true
+  apiKey:
+    description: 'Locize API key'
+    required: true
   projectSlug:
     description: 'Locize project slug. Used to provide a quick link in the comment to navigate directly to the project settings for quick publishing.'
   leftVersion:
