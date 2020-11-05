@@ -3,13 +3,14 @@ jest.mock('@actions/github')
 jest.mock('@actions/http-client')
 
 import { mocks } from '@actions/core'
-import { createCommentMock } from '@actions/github'
+import { createCommentMock, contextMock, pr } from '@actions/github'
 import { listResourcesMock } from '@actions/http-client'
 import { runAction } from '../src/runAction'
 import { mockFetchResource } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
+  contextMock.mockReturnValue(pr)
 })
 
 it.only('should allow customizing the left and right versions', async () => {

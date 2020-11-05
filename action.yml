@@ -21,9 +21,6 @@ inputs:
   ignoreDeletedKeys:
     description: 'When true, will ignore deleted keys in the comparison.'
     default: true
-  includeDrafts:
-    description: 'When true, will run the action for draft PRs.'
-    default: false
   token:
     description: "GITHUB_TOKEN used to authenticate requests. Since there's a default, this is typically not supplied by the user."
     default: ${{ github.token }}

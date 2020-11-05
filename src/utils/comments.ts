@@ -19,8 +19,7 @@ export async function minimizeComment(id: string) {
 export async function getComment() {
   const { data: comments } = await octokit.issues.listComments({
     ...context.repo,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    issue_number: context.payload.pull_request!.number,
+    issue_number: context.issue.number,
   })
 
   return comments.find(({ body }) => body.includes(credits))

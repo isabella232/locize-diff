@@ -4,7 +4,6 @@ export const mocks = {
   apiKey: jest.fn(),
   leftVersion: jest.fn(),
   rightVersion: jest.fn(),
-  includeDrafts: jest.fn(),
   ignoreDeletedKeys: jest.fn(),
 }
 
@@ -13,7 +12,6 @@ const defaults = {
   apiKey: 'apiKey',
   leftVersion: 'latest',
   rightVersion: 'production',
-  includeDrafts: 'false',
   ignoreDeletedKeys: 'true',
 }
 

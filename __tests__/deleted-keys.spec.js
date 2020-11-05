@@ -3,12 +3,13 @@ jest.mock('@actions/github')
 jest.mock('@actions/http-client')
 
 import { mocks } from '@actions/core'
-import { createCommentMock } from '@actions/github'
+import { createCommentMock, contextMock, pr } from '@actions/github'
 import { runAction } from '../src/runAction'
 import { mockFetchResource, mockListResources } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
+  contextMock.mockReturnValue(pr)
 
   mockListResources((version) => [`projectId/${version}/en-US/translation`])
   mockFetchResource(

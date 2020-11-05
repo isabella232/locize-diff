@@ -32,39 +32,72 @@ Locize version to use as the right side of the comparision. Default: `'productio
 
 If you wish to also mark deleted keys as a diff, set this input to `false`. Default: `true`
 
-### `includeDrafts`
-
-When `true`, will run the action on draft PRs. Default: `false`
-
 ### `token`
 
 `GITHUB_TOKEN` used to authenticate requests. Since there's a default, this is typically not supplied by the user. Default: `${{ github.token }}`
 
 ## Usage
 
-> Note: We recommend running this action with the `pull_request` event.
-
 Basic:
 
 ```yml
-steps:
-  - uses: actions/checkout@v2
-  - uses: Widen/locize-diff@v1
-    with:
-      projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
-      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
-      projectSlug: maj9dez2
+on:
+  pull_request:
+  issue_comment:
+    types: [created]
+name: Locize Diff
+jobs:
+  diff:
+    name: Locize Diff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Widen/locize-diff@v2
+        with:
+          apiKey: ${{ secrets.LOCIZE_API_KEY }}
+          projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+          projectSlug: maj9dez2
 ```
 
 Custom versions:
 
 ```yml
-steps:
-  - uses: actions/checkout@v2
-  - uses: Widen/locize-diff@v1
-    with:
-      projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
-      apiKey: 4734080e-2860-40b4-9007-781ce07a571d
-      leftVersion: left
-      rightVersion: right
+on:
+  pull_request:
+  issue_comment:
+    types: [created]
+name: Locize Diff
+jobs:
+  diff:
+    name: Locize Diff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Widen/locize-diff@v2
+        with:
+          apiKey: ${{ secrets.LOCIZE_API_KEY }}
+          projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
+          leftVersion: left
+          rightVersion: right
+```
+
+Ignore draft PRs:
+
+```yml
+on:
+  pull_request:
+  issue_comment:
+    types: [created]
+name: Locize Diff
+jobs:
+  diff:
+    name: Locize Diff
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Widen/locize-diff@v2
+        with:
+          apiKey: ${{ secrets.LOCIZE_API_KEY }}
+          projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
 ```

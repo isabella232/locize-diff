@@ -1,10 +1,5 @@
 import { getInput } from '@actions/core'
-import { ResourceCollection } from './types'
-
-export interface ResourceDiff {
-  key: string
-  diffs: Record<string, { left?: string; right?: string }>
-}
+import { ResourceCollection, ResourceDiff } from './types'
 
 function getKeys(left: ResourceCollection, right: ResourceCollection) {
   const keys = Object.keys(left.resources)

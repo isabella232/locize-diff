@@ -1,6 +1,7 @@
 import { getInput } from '@actions/core'
 import { HttpClient } from '@actions/http-client'
 import { BearerCredentialHandler } from '@actions/http-client/auth'
+import { ResourceCollection, Dict } from './utils/types'
 
 const authHandler = new BearerCredentialHandler(getInput('apiKey'))
 const client = new HttpClient(undefined, [authHandler])
@@ -24,4 +25,22 @@ export async function listResources(
   version: string
 ): Promise<ListResourcesResponse[]> {
   return getJSON(`https://api.locize.app/download/${projectId}/${version}`)
+}
+
+export async function collectResources(
+  projectId: string,
+  version: string
+): Promise<ResourceCollection[]> {
+  const resources = await listResources(projectId, version)
+  const promises = resources.map(async (resource) => {
+    const [language, namespace] = resource.url.split('/').slice(-2)
+    const url = resource.url.replace(projectId, `pull/${projectId}`)
+
+    return {
+      key: `${language}/${namespace}`,
+      resources: await getJSON<Dict>(url),
+    }
+  })
+
+  return Promise.all(promises)
 }
