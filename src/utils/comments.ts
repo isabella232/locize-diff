@@ -4,7 +4,7 @@ import { credits } from './message'
 
 const octokit = getOctokit(getInput('token'))
 
-const query = `
+export const minimizeComment = `
 mutation($subjectId: ID!) {
   minimizeComment(input: { subjectId: $subjectId, classifier: RESOLVED }) {
     clientMutationId
@@ -12,7 +12,15 @@ mutation($subjectId: ID!) {
 }
 `
 
-export async function minimizeComment(id: string) {
+export const unminimizeComment = `
+mutation($subjectId: ID!) {
+  unminimizeComment(input: { subjectId: $subjectId }) {
+    clientMutationId
+  }
+}
+`
+
+export async function runGraphql(query: string, id: string) {
   await octokit.graphql(query, { subjectId: id })
 }
 

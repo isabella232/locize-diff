@@ -4414,14 +4414,21 @@ var comments_awaiter = (undefined && undefined.__awaiter) || function (thisArg, 
 
 
 const comments_octokit = Object(github.getOctokit)(Object(core.getInput)('token'));
-const query = `
+const minimizeComment = `
 mutation($subjectId: ID!) {
   minimizeComment(input: { subjectId: $subjectId, classifier: RESOLVED }) {
     clientMutationId
   }
 }
 `;
-function minimizeComment(id) {
+const unminimizeComment = `
+mutation($subjectId: ID!) {
+  unminimizeComment(input: { subjectId: $subjectId }) {
+    clientMutationId
+  }
+}
+`;
+function runGraphql(query, id) {
     return comments_awaiter(this, void 0, void 0, function* () {
         yield comments_octokit.graphql(query, { subjectId: id });
     });
@@ -4495,7 +4502,7 @@ function runDiff() {
             if (comment) {
                 if (comment.body !== req.body) {
                     yield octokit.issues.updateComment(Object.assign(Object.assign({}, req), { comment_id: comment.id }));
-                    // await unminimizeComment(comment.node_id)
+                    yield runGraphql(unminimizeComment, comment.node_id);
                     return 'comment-updated';
                 }
             }
@@ -4507,7 +4514,7 @@ function runDiff() {
         // If the comment exists and there are no longer any diffs, we minimize the
         // comment so it no longer shows in the GitHub UI.
         if (comment) {
-            yield minimizeComment(comment.node_id);
+            yield runGraphql(minimizeComment, comment.node_id);
             return 'comment-minimized';
         }
         return 'no-diffs';

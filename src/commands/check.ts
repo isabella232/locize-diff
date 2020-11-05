@@ -1,7 +1,12 @@
 import { getInput } from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import { collectResources } from '../api'
-import { getComment, minimizeComment } from '../utils/comments'
+import {
+  getComment,
+  minimizeComment,
+  runGraphql,
+  unminimizeComment,
+} from '../utils/comments'
 import { diffResources } from '../utils/diff'
 import { createMessage } from '../utils/message'
 
@@ -32,7 +37,7 @@ export async function runDiff(): Promise<DiffResult> {
     if (comment) {
       if (comment.body !== req.body) {
         await octokit.issues.updateComment({ ...req, comment_id: comment.id })
-        // await unminimizeComment(comment.node_id)
+        await runGraphql(unminimizeComment, comment.node_id)
         return 'comment-updated'
       }
     } else {
@@ -44,7 +49,7 @@ export async function runDiff(): Promise<DiffResult> {
   // If the comment exists and there are no longer any diffs, we minimize the
   // comment so it no longer shows in the GitHub UI.
   if (comment) {
-    await minimizeComment(comment.node_id)
+    await runGraphql(minimizeComment, comment.node_id)
     return 'comment-minimized'
   }
 
