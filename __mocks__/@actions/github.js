@@ -29,6 +29,7 @@ export const pr = {
 
 export const prComment = (body) => ({
   eventName: 'issue_comment',
+  actor: 'somebody',
   issue: {
     number: 123,
   },
