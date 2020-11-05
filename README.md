@@ -101,3 +101,19 @@ jobs:
           apiKey: ${{ secrets.LOCIZE_API_KEY }}
           projectId: 86d599ec-81c2-460a-b0d8-d236bd8753b5
 ```
+
+## Commands
+
+In addition to running on pull request events, this action also is setup to watch issue or pull request comments so you can manually trigger specific commands on-demand. The available commands and their usage are detailed below.
+
+### `@locize-diff check`
+
+This command will perform the same steps that run when you commit changes. Additionally, it will respond to your request with a comment explaining if the existing comment was updated, no diffs were found, or if an old comment was resolved. To run this command, create a comment with the following text:
+
+```
+@locize-diff check
+```
+
+### `@locize-diff copy`
+
+**Coming soon!**
