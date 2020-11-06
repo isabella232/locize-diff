@@ -32,3 +32,11 @@ export async function getComment() {
 
   return comments.find(({ body }) => body.includes(credits))
 }
+
+export async function createComment(body: string) {
+  await octokit.issues.createComment({
+    ...context.repo,
+    body,
+    issue_number: context.issue.number,
+  })
+}

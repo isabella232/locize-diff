@@ -1,19 +1,21 @@
 export const listResourcesMock = jest.fn()
 export const fetchResourceMock = jest.fn()
-
-function getMock(url) {
-  if (url.includes('/download/')) {
-    return listResourcesMock
-  } else if (url.includes('/pull/')) {
-    return fetchResourceMock
-  }
-}
+export const postJsonMock = jest.fn()
 
 export class HttpClient {
   async get(url) {
     return {
-      // readBody: async () => JSON.stringify('[]'),
-      readBody: async () => JSON.stringify(getMock(url)(url)),
+      readBody: async () => {
+        const mock = url.includes('/download/')
+          ? listResourcesMock
+          : url.includes('/pull/')
+          ? fetchResourceMock
+          : null
+
+        return JSON.stringify(mock(url))
+      },
     }
   }
+
+  postJson = postJsonMock
 }

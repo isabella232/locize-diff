@@ -1,5 +1,6 @@
 import { getInput } from '@actions/core'
 import { fetchResourceMock, listResourcesMock } from '@actions/http-client'
+import { createMessage } from '../src/utils/message'
 
 export function mockListResources(getUrls) {
   listResourcesMock.mockImplementation((url) => {
@@ -20,3 +21,12 @@ export function mockFetchResource(left, right) {
     return resource[`${language}/${namespace}`]
   })
 }
+
+export const sampleComment = createMessage([
+  {
+    diffs: {
+      foo: { left: 'bar', right: 'baz' },
+    },
+    key: 'en-US/translation',
+  },
+])

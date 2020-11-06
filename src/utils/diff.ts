@@ -1,5 +1,11 @@
 import { getInput } from '@actions/core'
+import { context, getOctokit } from '@actions/github'
+import { collectResources } from '../api'
+import { runGraphql, unminimizeComment } from './comments'
 import { ResourceCollection, ResourceDiff } from './types'
+import { GetResponseDataTypeFromEndpointMethod } from '@octokit/types'
+
+const octokit = getOctokit(getInput('token'))
 
 function getKeys(left: ResourceCollection, right: ResourceCollection) {
   const keys = Object.keys(left.resources)
@@ -31,7 +37,7 @@ function diffCollection(
   return { key: left.key, diffs }
 }
 
-export function diffResources(
+function diffResources(
   left: ResourceCollection[],
   right: ResourceCollection[]
 ): ResourceDiff[] {
@@ -41,4 +47,30 @@ export function diffResources(
       diffCollection(leftItem, right.find((item) => leftItem.key === item.key)!)
     )
     .filter((diff) => Object.keys(diff.diffs).length)
+}
+
+export async function getDiffs() {
+  const projectId = getInput('projectId')
+  const leftVersion = getInput('leftVersion')
+  const rightVersion = getInput('rightVersion')
+
+  const left = await collectResources(projectId, leftVersion)
+  const right = await collectResources(projectId, rightVersion)
+  return diffResources(left, right)
+}
+
+export async function updateDiffComment(
+  comment: GetResponseDataTypeFromEndpointMethod<
+    typeof octokit.issues.updateComment
+  >,
+  body: string
+) {
+  await runGraphql(unminimizeComment, comment.node_id)
+
+  await octokit.issues.updateComment({
+    ...context.repo,
+    body,
+    issue_number: context.issue.number,
+    comment_id: comment.id,
+  })
 }

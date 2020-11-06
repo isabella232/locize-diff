@@ -25,6 +25,9 @@ export const pr = {
   issue: {
     number: 123,
   },
+  payload: {
+    pull_request: {},
+  },
 }
 
 export const prComment = (body) => ({

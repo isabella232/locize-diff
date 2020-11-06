@@ -1,7 +1,7 @@
 import { getInput } from '@actions/core'
 import { HttpClient } from '@actions/http-client'
 import { BearerCredentialHandler } from '@actions/http-client/auth'
-import { ResourceCollection, Dict } from './utils/types'
+import { Dict, ResourceCollection } from './utils/types'
 
 const authHandler = new BearerCredentialHandler(getInput('apiKey'))
 const client = new HttpClient(undefined, [authHandler])
@@ -43,4 +43,17 @@ export async function collectResources(
   })
 
   return Promise.all(promises)
+}
+
+export async function updateTranslations(
+  key: string,
+  updates: Record<string, string | null>
+) {
+  const projectId = getInput('projectId')
+  const version = getInput('rightVersion')
+
+  await client.postJson(
+    `https://api.locize.app/update/${projectId}/${version}/${key}`,
+    updates
+  )
 }

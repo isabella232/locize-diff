@@ -4,16 +4,15 @@ jest.mock('@actions/http-client')
 
 import { mocks } from '@actions/core'
 import {
-  createCommentMock,
-  listCommentsMock,
-  updateCommentMock,
-  graphqlMock,
   contextMock,
+  createCommentMock,
+  graphqlMock,
+  listCommentsMock,
   pr,
+  updateCommentMock,
 } from '@actions/github'
-import { createMessage } from '../src/utils/message'
 import { runAction } from '../src/runAction'
-import { mockListResources, mockFetchResource } from './utils'
+import { mockFetchResource, mockListResources, sampleComment } from './utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -44,15 +43,6 @@ it('should not a comment when there are diffs', async () => {
   await runAction()
   expect(createCommentMock).not.toHaveBeenCalled()
 })
-
-const sampleComment = createMessage([
-  {
-    diffs: {
-      foo: { left: 'bar', right: 'baz' },
-    },
-    key: 'en-US/translation',
-  },
-])
 
 it('should not comment if the comment already exists', async () => {
   listCommentsMock.mockReturnValue([{ body: sampleComment }])

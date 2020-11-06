@@ -5,14 +5,13 @@ jest.mock('@actions/http-client')
 import {
   contextMock,
   createCommentMock,
-  prComment,
   graphqlMock,
   listCommentsMock,
+  prComment,
   updateCommentMock,
 } from '@actions/github'
 import { runAction } from '../../src/runAction'
-import { createMessage } from '../../src/utils/message'
-import { mockFetchResource, mockListResources } from '../utils'
+import { mockFetchResource, mockListResources, sampleComment } from '../utils'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -31,15 +30,6 @@ it('should allow manually requesting a diff', async () => {
   expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
   expect(createCommentMock.mock.calls[0][0].body).toMatchSnapshot()
 })
-
-const sampleComment = createMessage([
-  {
-    diffs: {
-      foo: { left: 'bar', right: 'baz' },
-    },
-    key: 'en-US/translation',
-  },
-])
 
 it('should notify the user when updating an existing comment', async () => {
   listCommentsMock.mockReturnValue([{ body: sampleComment }])
