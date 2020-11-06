@@ -116,4 +116,8 @@ This command will perform the same steps that run when you commit changes. Addit
 
 ### `@locize-diff copy`
 
-**Coming soon!**
+This command will copy changes from the `leftVersion` to the `rightVersion` without you having to bother with manually doing this in Locize! This command has several safeguards in place to prevent accidentally copying translations you don't want to by ensuring that the diff comment in the PR/issue is up to date before copying any changes. To run this command, create a comment with the following text:
+
+```
+@locize-diff copy
+```
