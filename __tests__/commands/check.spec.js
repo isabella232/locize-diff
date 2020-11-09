@@ -89,3 +89,19 @@ it('should notify the user when there are no diffs', async () => {
     `"@somebody Good news! I didn't find any diffs so everything in Locize is up to date!"`
   )
 })
+
+it('should notify the user when the diffs are unchanged', async () => {
+  listCommentsMock.mockReturnValue([{ body: sampleComment }])
+  mockListResources((version) => [`projectId/${version}/en-US/translation`])
+  mockFetchResource(
+    { 'en-US/translation': { foo: 'bar' } },
+    { 'en-US/translation': { foo: 'baz' } }
+  )
+
+  await runAction()
+  expect(createCommentMock).toHaveBeenCalledTimes(1)
+  expect(createCommentMock.mock.calls[0][0].issue_number).toBe(123)
+  expect(createCommentMock.mock.calls[0][0].body).toMatchInlineSnapshot(
+    `"@somebody Looks like diffs haven't changed since I last checked. If you want to copy the diffs from left to right, try running \`@locize-diff copy\`."`
+  )
+})
