@@ -86,6 +86,11 @@ Ignore draft PRs:
 ```yml
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
   issue_comment:
     types: [created]
 name: Locize Diff
