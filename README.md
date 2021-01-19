@@ -14,6 +14,8 @@ Locize project id. You can find your `projectId` in your project settings under 
 
 Locize API key. You can find your `apiKey` in your project settings under the **Api Keys** tab. **Required**
 
+*NOTE*: the `apiKey` needs to have admin access and access to all versions. This can be set by the **Admin Access** checkbox under **Api Keys**
+
 ### `projectSlug`
 
 Locize project slug. Used to provide a quick link in the comment to navigate directly to the project settings for quick publishing.
